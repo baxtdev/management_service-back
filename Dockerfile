@@ -1,12 +1,27 @@
-FROM python:3.11-alpine3.16
+FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
-COPY requirements.txt /app/requirements.txt
-COPY . /app
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpango1.0-0 \
+    libpangocairo-1.0-0 \
+    libcairo2 \
+    libgdk-pixbuf2.0-0 \
+    libffi-dev \
+    libgobject-2.0-0 \
+    shared-mime-info \
+    postgresql-client \
+    libpq-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+COPY . .
+
 EXPOSE 8000
 
-RUN apk add postgresql-client build-base postgresql-dev
-
-RUN pip3 install -r requirements.txt
