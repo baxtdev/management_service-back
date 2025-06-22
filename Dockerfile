@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     libcairo2 \
     libgdk-pixbuf2.0-0 \
     libffi-dev \
-    libgobject-2.0-0 \
+    libglib2.0-0 \
     shared-mime-info \
     postgresql-client \
     libpq-dev \
@@ -24,4 +24,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 
 EXPOSE 8000
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
