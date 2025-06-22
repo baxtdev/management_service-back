@@ -9,10 +9,10 @@ class Product(models.Model):
     description = models.TextField(
         "Описание",
     )
-    price = models.PositiveIntegerField(
+    price = models.IntegerField(
         "Цена",
     )
-    stock_quantity = models.PositiveIntegerField(
+    stock_quantity = models.IntegerField(
         "Остаток"
     )
     is_active = models.BooleanField(

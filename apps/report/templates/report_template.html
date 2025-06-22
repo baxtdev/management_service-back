@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчет по продажам</title>
+    <style>
+        body { font-family: sans-serif; font-size: 12px; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 5px; text-align: left; }
+        .summary { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Отчет по продажам</h1>
+    <p>Период: {{ start_date }} – {{ end_date }}</p>
+
+    <div class="summary">
+        <p><strong>Общая выручка:</strong> {{ total_revenue }} KGS</p>
+        <p><strong>Количество заказов:</strong> {{ total_orders }}</p>
+        <p><strong>Топ-5 клиентов:</strong></p>
+        <ul>
+            {% for client in top_clients %}
+                <li>{{ client.full_name }} — {{ client.total }} KGS</li>
+            {% endfor %}
+        </ul>
+        <p><strong>Популярный товар:</strong> {{ top_product.name }} ({{ top_product.total_quantity }} шт.)</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Клиент</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.date }}</td>
+                <td>{{ order.customer }}</td>
+                <td>{{ order.total_sum }}</td>
+                <td>{{ order.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -79,9 +79,9 @@ class Order(models.Model):
 
     @transaction.atomic
     def confirm_order(self):
-        if self.status != self.DRAFT:
-            raise ValidationError("Подтверждение возможно только из статуса черновика")
-
+        if not self.pk:
+            raise ValidationError("Невозможно подтвердить незаписанный заказ")
+        
         for item in self.items.select_related("product"):
             if item.product.stock_quantity < item.quantity:
                 raise ValidationError(
@@ -90,11 +90,9 @@ class Order(models.Model):
         
         for item in self.items.select_related("product"):
             item.product.stock_quantity -= item.quantity
-            item.product.save()
+            item.product.save(update_fields=['stock_quantity'])
 
-        self.status = self.CONFIRMED
         self.calculate_total()
-        self.save()
 
 
 class OrderItem(models.Model):
@@ -135,5 +133,6 @@ class OrderItem(models.Model):
 
     def get_total_price(self):
         if self.price is None or self.quantity is None:
-            return 0
-        return (self.price * self.quantity) * (1 - (self.discount or 0) / 100)
+            return Decimal("0.00")
+        discount_fraction = (self.discount or Decimal("0.00")) / Decimal("100")
+        return (self.price * self.quantity) * (1 - discount_fraction)

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15.3-alpine3.18
+    env_file:
+      - .env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - app
+  
+  main:
+    build:
+      context: .
+    env_file:
+      - .env
+    command: python manage.py runserver 8000
+    volumes:
+      - .:/app:delegated
+    ports:
+      - ${PORT}:8000
+    depends_on:
+      - postgres
+    networks:
+      - app
+    restart: always
+
+networks:
+  app:
+
+volumes:
+  pgdata:
